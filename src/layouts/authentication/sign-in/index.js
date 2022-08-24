@@ -49,20 +49,19 @@ function Basic() {
 
 	const [rememberMe, setRememberMe] = useState(false);
 
-	const emailRef = useRef(null)
+	const userNameOrEmailRef = useRef(null)
 	const passwordRef = useRef(null)
 
 	const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
 	const login = () => {
-		const email = emailRef.current.querySelector('input[type=email]').value
+		// userNameOrEmail: event.target.querySelector('input[name=userNameOrEmail]').value,
+		const userNameOrEmail = userNameOrEmailRef.current.querySelector('input[type=userNameOrEmail]').value
 		const password = passwordRef.current.querySelector('input[type=password]').value
-		console.log("hhhhhhh")
-		console.log("hhhhhhh")
-		fetch(`${process.env.REACT_APP_API_URL}admin/loginAdmin`,  {
+		fetch(`http://localhost:5000/users/login`,  {
 			method: 'POST',
 			body: JSON.stringify({
-				email,
+				userNameOrEmail,
 				password
 			}),
 			headers: {
@@ -81,11 +80,9 @@ function Basic() {
 			})
 		}).catch((e) => {
 		console.log(e)
-		console.log("hhhhhhherrrror")
 			
 		})
 
-		console.log("hhhhhhherrrror22222222")
 	}
 
 	return (
@@ -126,7 +123,7 @@ function Basic() {
 				<MDBox pt={4} pb={3} px={3}>
 					<MDBox component="form" role="form">
 						<MDBox mb={2}>
-							<MDInput type="email" label="Email" fullWidth ref={emailRef} />
+							<MDInput type="userNameOrEmail" label="Email" fullWidth ref={userNameOrEmailRef} />
 						</MDBox>
 						<MDBox mb={2}>
 							<MDInput type="password" label="Password" fullWidth ref={passwordRef} />

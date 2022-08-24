@@ -38,15 +38,13 @@ function EditAdmin() {
     const nameRef = useRef(null)
     const emailRef = useRef(null)
     const passwordRef = useRef(null)
-    const passwordConfirmationRef = useRef(null)
 
     const editAdmin = () => {
         const name = nameRef.current.querySelector('input[type=text]').value
         const email = emailRef.current.querySelector('input[type=email]').value
         const password = passwordRef.current.querySelector('input[type=password]').value
-        const password_confirmation = passwordConfirmationRef.current.querySelector('input[type=password]').value
 
-        fetch(`${process.env.REACT_APP_API_URL}admins/${id}`, {
+        fetch(`${process.env.REACT_APP_API_URL}update/${id}`, {
             method: 'put',
             body: JSON.stringify({
                 name,

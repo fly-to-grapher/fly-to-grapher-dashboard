@@ -37,36 +37,23 @@ function SignUp() {
   const navigate = useNavigate()
 
   const firstNameRef = useRef(null)
-  const lastNameRef = useRef(null)
+  const nameRef = useRef(null)
   const userNameRef = useRef(null)
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
 
   const signUp = () => {
 
-
-        const first_name = firstNameRef.current.querySelector('input[type=text]').value
-        const last_name = lastNameRef.current.querySelector('input[type=text]').value
+        const name = nameRef.current.querySelector('input[type=text]').value
         const username = userNameRef.current.querySelector('input[type=text]').value
         const email = emailRef.current.querySelector('input[type=email]').value
         const password = passwordRef.current.querySelector('input[type=password]').value
         const isAdmin = "Admin"
 
-        // var formdata = new FormData();
-        // formdata.append("first_name", firstname);
-        // formdata.append("last_name", lastname);
-        // formdata.append("username", username);
-        // formdata.append("email", email);
-        // formdata.append("password", pass);
-        // formdata.append("isAdmin", Admin);
-        // console.log(formdata)
-
-
-        fetch(`${process.env.REACT_APP_API_URL}admin/createAdmin`, {
+        fetch(`http://localhost:5000/users/signup`, {
             method: 'POST',
             body: JSON.stringify({
-              first_name,
-              last_name,
+              name,
               username,
               email,
               password,
@@ -78,7 +65,6 @@ function SignUp() {
         }).then(response => response.json())
             .then(result => {
                 console.log(result)
-                console.log("added hhhhhh")
                 navigate("/dashboard")
             }).catch((error) => {
                 console.error('Error:', error);
@@ -108,11 +94,8 @@ function SignUp() {
 				</MDBox>
 				<MDBox pt={4} pb={3} px={3}>
 					<MDBox component="form" role="form">
-          <MDBox mb={2}>
-							<MDInput type="text" label="First Name" fullWidth ref={firstNameRef} />
-						</MDBox>
             <MDBox mb={2}>
-							<MDInput type="text" label="Last Name" fullWidth ref={lastNameRef} />
+							<MDInput type="text" label="Last Name" fullWidth ref={nameRef} />
 						</MDBox>
             <MDBox mb={2}>
 							<MDInput type="text" label="Username" fullWidth ref={userNameRef} />

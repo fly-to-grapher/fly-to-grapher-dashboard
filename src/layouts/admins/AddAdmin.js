@@ -27,11 +27,10 @@ function AddAdmin() {
         const password = passwordRef.current.querySelector('input[type=password]').value
         const password_confirmation = passwordConfirmationRef.current.querySelector('input[type=password]').value
 
-        sendRequest(`${process.env.REACT_APP_API_URL}admins`, {}, {
+        sendRequest(`${process.env.REACT_APP_API_URL}users/signup`, {}, {
             name,
             email,
             password,
-            password_confirmation
         }, {
             auth: true,
             type: 'json',

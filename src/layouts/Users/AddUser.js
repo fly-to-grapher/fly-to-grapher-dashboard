@@ -26,8 +26,7 @@ import { useNavigate } from "react-router-dom"
 
 function AddUser() {
 
-    const firstNameRef = useRef(null)
-    const lastNameRef = useRef(null)
+    const nameRef = useRef(null)
     const userNameRef = useRef(null)
     const emailRef = useRef(null)
     const passRef = useRef(null)
@@ -42,8 +41,7 @@ function AddUser() {
     const navigate = useNavigate()
 
     const saveuser = () => {
-        const firstname = firstNameRef.current.querySelector('input[type=text]').value
-        const lastname = lastNameRef.current.querySelector('input[type=text]').value
+        const name = nameRef.current.querySelector('input[type=text]').value
         console.log(userNameRef,"userNameRef")
         const username = userNameRef.current.querySelector('input[type=text]').value
         const email = emailRef.current.querySelector('input[type=email]').value
@@ -51,20 +49,6 @@ function AddUser() {
         const isAdmin = isAdminRef.current.querySelector('input[type=text]').value
         console.log(isAdmin,"isAdmin")
 
-    
-
-
-        // var formdata = new FormData();
-        // formdata.append("first_name", firstname);
-        // formdata.append("last_name", lastname);
-        // formdata.append("username", username);
-        // formdata.append("email", email);
-        // formdata.append("password", pass);
-        // formdata.append("isAdmin", isAdmin);
-
-
-
-        // console.log(formdata)
         fetch(`${process.env.REACT_APP_API_URL}admin/createAdmin`, {
             method: 'POST',
             headers: {
@@ -72,8 +56,7 @@ function AddUser() {
                 'Content-Type' :'application/json'
             },
             body:JSON.stringify({
-                first_name:firstname,
-                last_name:lastname,
+                name:name,
                 username,
                 email,
                 password:pass,
@@ -95,10 +78,6 @@ function AddUser() {
                 console.error('Error:', error);
             });
     }
-    // const handleCategoryChange = (event) => {
-    //     setCategory(event.target.value)
-    // }
-
     return (
         <DashboardLayout>
             <DashboardNavbar />
@@ -123,10 +102,7 @@ function AddUser() {
                             <MDBox pt={4} pb={3} px={3}>
                                 <MDBox component="form" role="form">
                                     <MDBox mb={2}>
-                                        <MDInput type="text" label="First name" variant="standard" fullWidth ref={firstNameRef} />
-                                    </MDBox>
-                                    <MDBox mb={2}>
-                                        <MDInput type="text" label="Last name" variant="standard" fullWidth ref={lastNameRef} />
+                                        <MDInput type="text" label="Last name" variant="standard" fullWidth ref={nameRef} />
                                     </MDBox>
                                     <MDBox mb={2}>
                                         <MDInput type="text" label="username" variant="standard" fullWidth ref={userNameRef} />
