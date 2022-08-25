@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useRef, useContext } from "react";
-import { AuthContext } from "context/AuthContext";
+// import { AuthContext } from "context/AuthContext";
 
 // react-router-dom components
 import { Link, useNavigate } from "react-router-dom";
@@ -38,14 +38,16 @@ import MDButton from "components/MDButton";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
-
+import {AuthContext} from "../../../context/AuthContext";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
+import { useRequest } from "layouts/hooks";
 
 function Basic() {
 
 	const ctx = useContext(AuthContext)
 	const navigate = useNavigate()
+    const sendRequest = useRequest()
 
 	const [rememberMe, setRememberMe] = useState(false);
 
@@ -58,30 +60,42 @@ function Basic() {
 		// userNameOrEmail: event.target.querySelector('input[name=userNameOrEmail]').value,
 		const userNameOrEmail = userNameOrEmailRef.current.querySelector('input[type=userNameOrEmail]').value
 		const password = passwordRef.current.querySelector('input[type=password]').value
-		fetch(`http://localhost:5000/users/login`,  {
-			method: 'POST',
-			body: JSON.stringify({
-				userNameOrEmail,
-				password
-			}),
-			headers: {
-				'Content-Type': 'application/json'
-			},
+		sendRequest(`http://localhost:5000/users/login`, {}, {
+            userNameOrEmail ,
+            password
+        }, { type: 'json' }, 'POST')
+            .then((response) => {
+                if (response.success) {
+                    ctx.login(response)
+                    navigate('/dashboard')
+                } else {
+                    window.alert(response?.messages?.join(' '))
+                }
+            });
+		
+		// fetch(`http://localhost:5000/users/login`,  {
+		// 	method: 'POST',
+		// 	body: JSON.stringify({
+		// 		userNameOrEmail,
+		// 		password
+		// 	}),
+		// 	headers: {
+		// 		'Content-Type': 'application/json'
+		// 	},
 			
-		}).then(response => {
-			console.log("then2")
-			response.json().then(loggedIn => {
+		// }).then(response => {
+		// 	response.json().then(loggedIn => {
 				
-			if (loggedIn.success) {
-			ctx.login(loggedIn.data.token)
-			window.localStorage.setItem("token", loggedIn.data.token)
-					navigate('/dashboard')
-			}
-			})
-		}).catch((e) => {
-		console.log(e)
+		// 	if (loggedIn.success) {
+		// 	ctx.login(response)
+		// 	window.localStorage.setItem("token", loggedIn.data.token)
+		// 			navigate('/dashboard')
+		// 	}
+		// 	})
+		// }).catch((e) => {
+		// console.log(e)
 			
-		})
+		// })
 
 	}
 

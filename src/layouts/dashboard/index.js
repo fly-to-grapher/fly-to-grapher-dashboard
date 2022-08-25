@@ -38,26 +38,25 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "context/AuthContext";
 
 function Dashboard() {
-  const { sales, tasks } = reportsLineChartData;
+  // const { sales, tasks } = reportsLineChartData;
 
   const ctx = useContext(AuthContext)
 
-  const [recipes, setRecipes] = useState([])
+  const [files, setFiles] = useState([])
   const [users, setUsers] = useState([])
 
   useEffect(() => {
-		fetch(`${process.env.REACT_APP_API_URL}recipes`)
+		fetch(`http://localhost:5000/files`)
 			.then(response => {
-				response.json().then(recipe => {
-					console.log(recipe.data.length, "hhhhhhhhhh")
-          setRecipes(recipe?.data)
+				response.json().then(file => {
+          setFiles(file?.data)
 				})
 			})
 
 	}, [])
 
   useEffect(() => {
-		fetch(`${process.env.REACT_APP_API_URL}admin/getUsers`,{
+		fetch(`http://localhost:5000/users`,{
       headers: {
         'Authorization': 'Bearer ' + ctx.token
     },
@@ -65,34 +64,19 @@ function Dashboard() {
 
 			.then(response => {
 				response.json().then(user => {
-					console.log(user.data.length, "bbbb")
           setUsers(user?.data)
 				})
 			})
 
 	}, [])
 
-  // useEffect(() => {
-	// 	fetch(`${process.env.REACT_APP_API_URL}admin/getUsers`, {
-	// 		headers: {
-  //               'Authorization': 'Bearer ' + ctx.token
-  //           }
-	// 	}).then(response => {
-	// 			response.json().then(Users => {
-  //         console.log("Users?.data", Users?.data)
-	// 				setUsers(Users?.data)
-	// 			})
-	// 		})
-	// }, [])
 
-  console.log("recipesrecipesrecipes", recipes.length)
-  const recipeN = recipes.length
+  console.log("recipesrecipesrecipes", files.length)
+  const fileN = files.length
 
   console.log("usersusersusers", users.length)
   const usersN = users.length
 
-  // console.log("usersusersuser", users.length)
-  // const usersN = users.length
 
   return (
     <DashboardLayout>
@@ -103,9 +87,9 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="dark"
-                icon="local_dining"
-                title="recipe"
-                count={recipeN}
+                icon="F"
+                title="Files"
+                count={fileN}
                 percentage={{
                   color: "success",
                   // amount: "+55%",
@@ -129,87 +113,20 @@ function Dashboard() {
             </MDBox>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
-            {/* <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="success"
-                icon="store"
-                title="Revenue"
-                count="34k"
-                percentage={{
-                  color: "success",
-                  amount: "+1%",
-                  label: "than yesterday",
-                }}
-              />
-            </MDBox> */}
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
-            {/* <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="primary"
-                icon="person_add"
-                title="Followers"
-                count="+91"
-                percentage={{
-                  color: "success",
-                  amount: "",
-                  label: "Just updated",
-                }}
-              />
-            </MDBox> */}
           </Grid>
         </Grid>
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={4}>
-              {/* <MDBox mb={3}>
-                <ReportsBarChart
-                  color="info"
-                  title="website views"
-                  description="Last Campaign Performance"
-                  date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
-                />
-              </MDBox> */}
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
-              {/* <MDBox mb={3}>
-                <ReportsLineChart
-                  color="success"
-                  title="daily sales"
-                  description={
-                    <>
-                      (<strong>+15%</strong>) increase in today sales.
-                    </>
-                  }
-                  date="updated 4 min ago"
-                  chart={sales}
-                />
-              </MDBox> */}
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
-              {/* <MDBox mb={3}>
-                <ReportsLineChart
-                  color="dark"
-                  title="completed tasks"
-                  description="Last Campaign Performance"
-                  date="just updated"
-                  chart={tasks}
-                />
-              </MDBox> */}
             </Grid>
           </Grid>
         </MDBox>
-        {/* <MDBox>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={8}>
-              <Projects />
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <OrdersOverview />
-            </Grid>
-          </Grid>
-        </MDBox> */}
       </MDBox>
       <Footer />
     </DashboardLayout>

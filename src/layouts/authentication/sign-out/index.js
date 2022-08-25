@@ -6,8 +6,12 @@ function SignOut() {
     const navigate = useNavigate()
     const ctx = useContext(AuthContext)
     useEffect(() => {
-        ctx.logout()
-        navigate('/sign-in')
+        // const logout = () => {
+            if (window.confirm('Are you sure you want to log out ?')) {
+              ctx.logout()
+              navigate('/login')
+            }
+        //   }
     }, [])
     return <></>
 }

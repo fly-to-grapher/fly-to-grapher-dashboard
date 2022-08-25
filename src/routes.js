@@ -66,9 +66,9 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Posts",
-    key: "recipe",
-    icon: <Icon fontSize="small">P</Icon>,
+    name: "Files",
+    key: "Files",
+    icon: <Icon fontSize="small">F</Icon>,
     route: "/recipes",
     component: <Recipe />,
     requiresAuth: true,
