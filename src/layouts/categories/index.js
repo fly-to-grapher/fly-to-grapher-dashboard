@@ -18,7 +18,6 @@ import { Link } from "react-router-dom";
 const columns = [
     { Header: "name", accessor: "name", width: "45%", align: "left" },
     { Header: "photo", accessor: "photo", align: "left" },
-    { Header: "icon", accessor: "icon", align: "left" },
     { Header: "actions", accessor: "actions", align: "center" },
 ]
 // const rows = []
@@ -29,7 +28,7 @@ function Categories() {
 
     const deleteCategory = (categoryId) => {
         if (window.confirm('Are you sure')) {
-            fetch(`${process.env.REACT_APP_API_URL}categories/${categoryId}`, {
+            fetch(`http://localhost:5000/categories/${categoryId}`, {
                 method: "DELETE",
                 headers: {
                     'Authorization': 'Bearer ' + ctx.token
@@ -45,23 +44,23 @@ function Categories() {
     }
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_URL}categories`)
+        fetch(`http://localhost:5000/categories`)
             .then(response => {
                 response.json().then(categories => {
                     const allCategories = categories.data.map((category) => {
                         return {
                             name: <>{category.name}</>,
-                                photo: <><img src={category.photo} width="80" /></>,
-                                icon: <><img src={category.icon} width="80" /></>,
+                                photo: <><img src={category.picture} width="80" /></>,
+                                // icon: <><img src={category.icon} width="80" /></>,
                             actions: <>
-                                {/* <MDButton variant="text" color="error" onClick={() => { deleteCategory(category.id) }}>
+                                <MDButton variant="text" color="error" onClick={() => { deleteCategory(category.id) }}>
                                     <Icon>delete</Icon>&nbsp;delete
-                                </MDButton> */}
-                                <Link to={`/categories/edit/${category.id}`}>
+                                </MDButton>
+                                {/* <Link to={`/categories/edit/${category.id}`}>
                                     <MDButton variant="text" color="info">
-                                        <Icon>edit</Icon>&nbsp;edit
+                                        <Icon>delete</Icon>&nbsp;Delete
                                     </MDButton>
-                                </Link>
+                                </Link> */}
                             </>,
                         }
                     })

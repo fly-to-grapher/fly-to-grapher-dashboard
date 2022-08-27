@@ -10,14 +10,14 @@ import MDSnackbar from "components/MDSnackbar";
 
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
+import { useNavigate } from "react-router-dom"
 
 import { useContext, useRef, useState } from "react";
 import { AuthContext } from "context/AuthContext";
 
 function AddCategory() {
-
+    const navigate = useNavigate()
     const nameRef = useRef(null)
-    const iconRef = useRef(null)
     const pRef = useRef(null)
     const ctx = useContext(AuthContext)
 
@@ -34,32 +34,26 @@ const [categories, setCategories] = useState(0);
 
     const addCategory = () => {
         const categoryName = nameRef.current.querySelector('input[type=text]').value
-        const iconFile = iconRef.current.querySelector('input[type=file]').files
-        const photoFile = pRef.current.querySelector('input[type=file]').files
+        const picFile = pRef.current.querySelector('input[type=file]').files
 
         var formdata = new FormData();
         formdata.append("name", categoryName);
-        formdata.append("icon", iconFile[0]);
-        formdata.append("photo", photoFile[0]);
+        formdata.append("picture", picFile[0]);
 
-        fetch(`${process.env.REACT_APP_API_URL}categories/createcategory`, {
+        fetch(`http://localhost:5000/categories/add`, {
             method: 'post',
             headers: {
                 'Authorization': 'Bearer ' + ctx.token
             },
             body: formdata,
         })
-        .then(response => {
-            response.json().then(categoryAdded => {
-                // setServerResponse(categoryAdded.messages.join(' '))
-                if (categoryAdded.success) {
-                    setSnackBarType('success')
-                } else {
-                    setSnackBarType('error')
-                }
-                setOpenSnackBar(true)
-            })
-        }).catch(e => e) 
+        .then((response) => {
+            window.alert(response?.messages?.join(' '))
+            if (response?.success) {
+                navigate('/categories')
+            }
+        })
+        // }).catch(e => e) 
         
     }
 
@@ -74,10 +68,6 @@ const [categories, setCategories] = useState(0);
                                 <MDBox component="form" role="form">
                                     <MDBox mb={2}>
                                         <MDInput  ref={nameRef} type="text" label="Category Name" variant="standard" fullWidth />
-                                    </MDBox>
-                                    
-                                    <MDBox mb={2}>
-                                        <MDInput ref={iconRef} type="file" label="icon" variant="standard" fullWidth />
                                     </MDBox>
                                     <MDBox mb={2}>
                                         <MDInput ref={pRef} type="file" label="Photo" variant="standard" fullWidth />

@@ -36,7 +36,6 @@ function SignUp() {
 
   const navigate = useNavigate()
 
-  const firstNameRef = useRef(null)
   const nameRef = useRef(null)
   const userNameRef = useRef(null)
   const emailRef = useRef(null)
@@ -48,7 +47,7 @@ function SignUp() {
         const username = userNameRef.current.querySelector('input[type=text]').value
         const email = emailRef.current.querySelector('input[type=email]').value
         const password = passwordRef.current.querySelector('input[type=password]').value
-        const isAdmin = "Admin"
+        const isAdmin = "isAdmin"
 
         fetch(`http://localhost:5000/users/signup`, {
             method: 'POST',
@@ -65,7 +64,7 @@ function SignUp() {
         }).then(response => response.json())
             .then(result => {
                 console.log(result)
-                navigate("/dashboard")
+                navigate("/sign-in")
             }).catch((error) => {
                 console.error('Error:', error);
             });
