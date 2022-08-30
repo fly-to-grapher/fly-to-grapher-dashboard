@@ -21,7 +21,7 @@ import FormControl from "@mui/material/FormControl";
 
 import MenuItem from "@mui/material/MenuItem";
 
-function AddRecipe() {
+function AddFile() {
   const [category, setCategory] = useState(0);
   const nameRef = useRef(null);
   const desRef = useRef(null);
@@ -239,4 +239,4 @@ function AddRecipe() {
     </DashboardLayout>
   );
 }
-export default AddRecipe;
+export default AddFile;

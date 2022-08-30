@@ -46,12 +46,12 @@ import AddCategory from "layouts/categories/AddCategory";
 import EditCategory from "layouts/categories/EditCategory";
 import User from "layouts/Users";
 import AddUser from "layouts/Users/AddUser";
-import Recipe from "layouts/posts";
-import AddRecipe from "layouts/posts/AddPost";
-import EditRecipe from "layouts/posts/EditPost";
+import Files from "layouts/files";
+import AddFile from "layouts/files/AddFile";
+import EditFile from "layouts/files/EditFile";
 import Ingredients from "layouts/Ingredients";
 
-import Show from "layouts/posts/Show";
+import Show from "layouts/files/Show";
 
 const routes = [
   {
@@ -69,8 +69,8 @@ const routes = [
     name: "Files",
     key: "Files",
     icon: <Icon fontSize="small">F</Icon>,
-    route: "/recipes",
-    component: <Recipe />,
+    route: "/files",
+    component: <Files />,
     requiresAuth: true,
     inSideNav: true,
   },
@@ -137,17 +137,17 @@ const routes = [
   },
 
   {
-    key: "add-recipe",
-    route: "/recipes/add",
-    component: <AddRecipe />,
+    key: "add-file",
+    route: "/files/add",
+    component: <AddFile />,
     requiresAuth: true,
     inSideNav: false,
   },
 
   {
-    key: "edit-recipe",
-    route: "/recipes/edit/:id",
-    component: <EditRecipe />,
+    key: "edit-file",
+    route: "/files/edit/:id",
+    component: <EditFile />,
     requiresAuth: true,
     inSideNav: false,
   },
