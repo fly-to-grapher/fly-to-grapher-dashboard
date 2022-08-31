@@ -18,19 +18,17 @@ import MDSnackbar from "components/MDSnackbar";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
-
 import MenuItem from "@mui/material/MenuItem";
+import { useRequest } from "layouts/hooks";
+
 
 function AddFile() {
-  const [category, setCategory] = useState(0);
-  const nameRef = useRef(null);
-  const desRef = useRef(null);
-  const rPRef = useRef(null);
-  const bPRef = useRef(null);
-  const yVRef = useRef(null);
-  const URef = useRef(null);
-  const CRef = useRef(null);
-  // const userCatIDRef = useRef(null)
+  const locationRef = useRef(null);
+  const fileRef = useRef(null);
+  const sendRequest = useRequest()
+  const [categories, setCategories] = useState([])
+  const [selectedCategories, setSelectedCategories] = useState([])
+  const [loading, setLoading] = useState(false);
 
   const ctx = useContext(AuthContext);
   const [serverResponse, setServerResponse] = useState(" ");
@@ -38,44 +36,45 @@ function AddFile() {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const closeSnackBar = () => setOpenSnackBar(false);
 
-  const [categories, setCategories] = useState(0);
-  const [categoriesData, setCategoriesData] = useState([]);
-  useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}categories`).then((response) => {
-      response.json().then((categories) => {
-        console.log(categories.data);
-        setCategoriesData(categories.data);
-      });
-    });
-  }, []);
+  // const [categories, setCategories] = useState(0);
+  // useEffect(() => {
+  //   fetch(`${process.env.REACT_APP_API_URL}categories`).then((response) => {
+  //     response.json().then((categories) => {
+  //       console.log(categories.data);
+  //       setCategoriesData(categories.data);
+  //     });
+  //   });
+  // }, []);
 
-  console.log(categoriesData, "hi");
+  const handleCategoryToggle = (e) => {
+    const categoriesClone = [...selectedCategories]
+    if (e.target.checked) {
+        categoriesClone.push(e.target.value)  
+    } else {
+        categoriesClone.splice(categoriesClone.indexOf(e.target.value), 1)
+    }
+    setSelectedCategories(categoriesClone)
+}
+useEffect(() => {
+  sendRequest("http://localhost:5000/categories")
+      .then((response) => {
+          setCategories(response?.data)
+      })
+}, [])
 
-  const addRecipe = () => {
+  const addFile = () => {
     
-    const name = nameRef.current.querySelector("input[type=text]").value;
-    const description = desRef.current.querySelector("input[type=text]").value;
-
-    const youtube_video = yVRef.current.querySelector("input[type=text]").value;
-
-    const recipe_photo = rPRef.current.querySelector("input[type=file]").files;
-    const background_photo =
-      bPRef.current.querySelector("input[type=file]").files;
+    const location = locationRef.current.querySelector("input[type=text]").value;
+    const file_name = fileRef.current.querySelector("input[type=file]").files;
 
     var formdata = new FormData();
 
-    formdata.append("name", name);
-    formdata.append("description", description);
-    formdata.append("recipe_photo", recipe_photo[0]);
-    formdata.append("background_photo", background_photo[0]);
-    formdata.append("youtube_video", youtube_video);
-    formdata.append("categories", categories);
-    
-    // formdata.append("youtube_video", youtube_video);
-
-    console.log(formdata);
-
-    fetch(`${process.env.REACT_APP_API_URL}recipes/addRecipe`, {
+    formdata.append('location', location)
+    for (var i = 0; i < selectedCategories.length; i++) {
+        formdata.append('categories[]', selectedCategories[i])
+    }
+    formdata.append('file_name', file_name[0])
+    fetch(`http://localhost:5000/files/add`, {
       method: "POST",
       headers: {
         Authorization: "Bearer " + ctx.token,
@@ -111,52 +110,18 @@ function AddFile() {
                 <MDBox component="form" role="form">
                   <MDBox mb={2}>
                     <MDInput
-                      ref={nameRef}
+                      ref={locationRef}
                       type="text"
-                      label="name"
+                      label="location"
                       variant="standard"
                       fullWidth
                     />
                   </MDBox>
-                  {/* <MDBox mb={2}>
-                                        <MDInput ref={URef} type="text" label="name" variant="standard" fullWidth />
-                                    </MDBox>
-                                    <MDBox mb={2}>
-                                        <MDInput ref={CRef} type="text" label="name" variant="standard" fullWidth />
-                                    </MDBox> */}
                   <MDBox mb={2}>
+                    <p>Select file</p>
                     <MDInput
-                      ref={desRef}
-                      type="text"
-                      label="description"
-                      variant="standard"
-                      fullWidth
-                    />
-                  </MDBox>
-
-                  <MDBox mb={2}>
-                    <p>recipe_photo</p>
-                    <MDInput
-                      ref={rPRef}
+                      ref={fileRef}
                       type="file"
-                      variant="standard"
-                      fullWidth
-                    />
-                  </MDBox>
-                  <MDBox mb={2}>
-                    <p>background_photo</p>
-                    <MDInput
-                      ref={bPRef}
-                      type="file"
-                      variant="standard"
-                      fullWidth
-                    />
-                  </MDBox>
-                  <MDBox mb={2}>
-                    <MDInput
-                      ref={yVRef}
-                      type="text"
-                      label="video link"
                       variant="standard"
                       fullWidth
                     />
@@ -164,28 +129,24 @@ function AddFile() {
                   <MDBox mb={2}>
                     <Box sx={{ minWidth: 120 }}>
                       <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">
+                        {/* <InputLabel id="demo-simple-select-label">
                           Category
-                        </InputLabel>
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          value={categories}
-                          label="Category"
-                          style={{ padding: "20px 0" }}
-                          onChange={(e) => {
-                            setCategories(e.target.value);
-                          }}
-                        >
-                          {categoriesData.map((category, i) => {
-                            //check
-                            return (
-                              <MenuItem value={category.id} key={category.id}>
-                                {category.name}
-                              </MenuItem>
-                            );
-                          })}
-                        </Select>
+                        </InputLabel> */}
+                        <div className="">
+                            <label className="col-sm-3 col-form-label"><b>Select category</b></label>
+                            <div className="row mb-4">
+                                {
+                                    categories?.map((category, i) => {
+                                        return (
+                                            <div className='my-2 col-md-4 col-lg-3'>
+                                                <input onChange={handleCategoryToggle} type='checkbox' value={category.id} id={`category-${category.id}`} />
+                                                <label key={i} htmlFor={`category-${category.id}`}>{category.name}</label>
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                        </div>
                       </FormControl>
                     </Box>
                   </MDBox>
@@ -201,7 +162,7 @@ function AddFile() {
                                                     style={{padding: '20px 0'}}
                                                     onChange={(e) => {updateuserData({Category: {id: e.target.value}})}}
                                                 >
-                                                    {categoriesData.map((category, i) => {
+                                                    {categories?.map((category, i) => {
                                                         return <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>
                                                     })}
                                                 </Select>
@@ -213,9 +174,9 @@ function AddFile() {
                       variant="gradient"
                       color="info"
                       fullWidth
-                      onClick={addRecipe}
+                      onClick={addFile}
                     >
-                      add Recipe
+                      add File
                     </MDButton>
                   </MDBox>
                 </MDBox>

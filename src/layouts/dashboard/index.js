@@ -44,6 +44,7 @@ function Dashboard() {
 
   const [files, setFiles] = useState([])
   const [users, setUsers] = useState([])
+  const [categories, setCategories] = useState([])
 
   useEffect(() => {
 		fetch(`http://localhost:5000/files`)
@@ -55,13 +56,23 @@ function Dashboard() {
 
 	}, [])
 
+
+  useEffect(() => {
+		fetch(`http://localhost:5000/categories`)
+			.then(response => {
+				response.json().then(category => {
+          setCategories(category?.data)
+				})
+			})
+
+	}, [])
+
   useEffect(() => {
 		fetch(`http://localhost:5000/users`,{
       headers: {
         'Authorization': 'Bearer ' + ctx.token
     },
     })
-
 			.then(response => {
 				response.json().then(user => {
           setUsers(user?.data)
@@ -71,11 +82,9 @@ function Dashboard() {
 	}, [])
 
 
-  console.log("recipesrecipesrecipes", files.length)
   const fileN = files.length
-
-  console.log("usersusersusers", users.length)
   const usersN = users.length
+  const categoriesN = categories.length
 
 
   return (
@@ -86,14 +95,24 @@ function Dashboard() {
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
-                color="dark"
                 icon="F"
                 title="Files"
                 count={fileN}
                 percentage={{
                   color: "success",
-                  // amount: "+55%",
-                  // label: "than lask week",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                // color="dark"
+                icon="grid_on"
+                title="Categories"
+                count={categoriesN}
+                percentage={{
+                  color: "success",
                 }}
               />
             </MDBox>

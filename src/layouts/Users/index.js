@@ -1,82 +1,94 @@
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Icon from "@mui/material/Icon";
 import MDButton from "components/MDButton";
-import { Link } from "react-router-dom";
-import { AuthContext } from "context/AuthContext";
+import MDSnackbar from "components/MDSnackbar";
 
+import { AuthContext } from "context/AuthContext";
+import { Link } from "react-router-dom";
 
 const columns = [
-    { Header: "name", accessor: "name", width: "45%", align: "left" },
-    { Header: "email", accessor: "email", align: "left" },
+    { Header: "id", accessor: "id", align: "left" },
+    { Header: "user type", accessor: "user type", align: "left" },
+    { Header: "username", accessor: "username", align: "left" },
+    { Header: "location", accessor: "location", align: "left" },
+    { Header: "avatar", accessor: "avatar", align: "left" },
     { Header: "actions", accessor: "actions", align: "center" },
 ]
-
-
+// const rows = []
 
 function User() {
     const [rows, setRows] = useState([])
     const ctx = useContext(AuthContext)
 
-    const updateUser = (User_id, isActive) => {
-        if (window.confirm('Are you sure')) {
-            fetch(`${process.env.REACT_APP_API_URL}admin/isActiveUpdate/${User_id}`, {
-                method: "PUT",
-                body:JSON.stringify({
-                    isActive
-                } 
-                ),
+    const [openSnackBar, setOpenSnackBar] = useState(false)
+    const [serverResponse, setServerResponse] = useState('')
+    const [snackBarType, setSnackBarType] = useState('success')
 
-				headers: {
-					Authorization: "Bearer " + ctx.token, 'Content-Type' : 'application/json'
-				  },
-            }).then(response => {
-                response.json()
-                    .then(result => {
-                        console.log(result)
-                    })
+    const closeSnackBar = () => setOpenSnackBar(false);
+
+
+    const deleteCategory = (user_id) => {
+        if (window.confirm('Are you sure')) {
+            fetch(`http://localhost:5000/users/${user_id}`, {
+                method: "DELETE",
+                headers: {
+                    'Authorization': 'Bearer ' + ctx.token
+                }
             })
-            .catch(e => e)
+            .then((response) => response.json())
+            .then((result) => {
+                console.log(result);
+                setServerResponse(result.messages.join(" "));
+                if (result.success) {
+                setSnackBarType("success");
+                } else {
+                setSnackBarType("error");
+                }
+                setOpenSnackBar(true);
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
         }
     }
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_URL}admin/getUsers`, {
-            headers: {
-                'Authorization': 'Bearer ' + ctx.token
-            }
-        })
+        fetch(`http://localhost:5000/users`)
             .then(response => {
-                response.json().then(Users => {
-                    console.log(Users, "vvvvvvvvv")
-                    const allUsers = Users.data.map((User) => {
+                response.json().then(users => {
+                    const allCategories = users.data.map((user) => {
                         return {
-                            name: <>{User.first_name} {User.last_name}</>,
-                            email: <>{User.email}</>,
+                            id: <>{user.id}</>,
+                            user_type: <>{user.isAdmin}</>,
+                            username: <>{user.username}</>,
+                            location: <>{user.location}</>,
+                            avatar: <><img src={user.avatar} style={{ width: "5em", height: "5em", borderRadius: "50%" }} /></>,
                             actions: <>
-                                <MDButton variant="text" color="success" onClick={() => {updateUser(User.id,1)}}>
-                                    <Icon>toggle_on</Icon>&nbsp;IsActive
+                                <MDButton variant="text" color="error" onClick={() => { deleteCategory(user.id) }}>
+                                    <Icon>delete</Icon>&nbsp;delete
                                 </MDButton>
-                                <MDButton variant="text" color="error" onClick={() => {updateUser(User.id,0)}}>
-                                    <Icon>toggle_off</Icon>&nbsp;DeActivate
-                                </MDButton>
-                               
+                                {/* <Link to={`/users/edit/${avatar.id}`}>
+                                    <MDButton variant="text" color="info">
+                                        <Icon>delete</Icon>&nbsp;Delete
+                                    </MDButton>
+                                </Link> */}
                             </>,
                         }
                     })
-                    setRows(allUsers)
+                    setRows(allCategories)
                 })
             })
     }, [])
-
-
     return (
         <DashboardLayout>
             <DashboardNavbar />
@@ -101,14 +113,15 @@ function User() {
                                     alignItems="center"
                                 >
                                     <MDTypography variant="h6" color="white">
-                                    Users Table
+                                        Users Table
                                     </MDTypography>
-                                    <Link to='/Users/add'>
-                                        {/* <MDButton variant="text">
+                                    <Link to='/users/add'>
+                                        <MDButton variant="text">
                                             <Icon>add_circle</Icon>&nbsp;Add
-                                        </MDButton> */}
+                                        </MDButton>
                                     </Link>
                                 </Grid>
+
                             </MDBox>
                             <MDBox pt={3}>
                                 <DataTable
@@ -123,135 +136,20 @@ function User() {
                     </Grid>
                 </Grid>
             </MDBox>
+            <MDSnackbar
+                color={snackBarType}
+                icon={snackBarType == 'success' ? 'check' : 'warning'}
+                title="Recipe App"
+                content={serverResponse}
+                open={openSnackBar}
+                // onClose={closeSnackBar}
+                close={closeSnackBar}
+                dateTime=""
+                bgWhite
+            />
             <Footer />
         </DashboardLayout>
     );
 }
+
 export default User;
-
-// import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-// import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-
-// import Grid from "@mui/material/Grid";
-// import Card from "@mui/material/Card";
-
-// import MDBox from "components/MDBox";
-// import MDTypography from "components/MDTypography";
-// import Footer from "examples/Footer";
-// import DataTable from "examples/Tables/DataTable";
-// import { useContext, useEffect, useState } from "react";
-// import Icon from "@mui/material/Icon";
-// import MDButton from "components/MDButton";
-
-// import { Link } from "react-router-dom";
-// import { AuthContext } from "context/AuthContext";
-
-// const columns = [
-// 	{ Header: "name", accessor: "name", width: "45%", align: "left" },
-// 	{ Header: "email", accessor: "category", align: "left" },
-// 	{ Header: "actions", accessor: "actions", align: "center" },
-// ]
-
-
-
-
-// function User() {
-// 	const [rows, setRows] = useState([])
-
-// 	const ctx = useContext(AuthContext)
-
-// 	const deleteUser = (User_id) => {
-// 		if (window.confirm('Are you sure')) {
-// 			fetch(`${process.env.REACT_APP_API_URL}Users/${User_id}`, {
-// 				method: "DELETE"
-// 			}).then(response => {
-// 				response.json()
-// 					.then(deleted => {
-// 						console.log(deleted)
-// 					})
-// 			})
-// 			.catch(e => e)
-// 		}
-// 	}
-
-// 	useEffect(() => {
-// 		fetch(`${process.env.REACT_APP_API_URL}admin/getUsers`, {
-// 			headers: {
-//                 'Authorization': 'Bearer ' + ctx.token
-//             }
-// 		})
-// 			.then(response => {
-// 				response.json().then(Users => {
-// 					console.log(Users, "vvvvvvvvv")
-// 					const allUsers = Users.data.map((User) => {
-// 						return {
-// 							name: <>{User.first_name} {User.last_name}</>,
-// 							email: <>{User.email}</>,
-// 							actions: <>
-// 								<MDButton variant="text" color="error" onClick={() => {deleteUser(User.id)}}>
-// 									<Icon>delete</Icon>&nbsp;delete
-// 								</MDButton>
-// 								<Link to={`/Users/edit/${User.id}`}>
-// 									<MDButton variant="text" color="info">
-// 										<Icon>edit</Icon>&nbsp;edit
-// 									</MDButton>
-// 								</Link>
-// 							</>,
-// 						}
-// 					})
-// 					setRows(allUsers)
-// 				})
-// 			})
-// 	}, [])
-// 	return (
-// 		<DashboardLayout>
-// 			<DashboardNavbar />
-// 			<MDBox pt={6} pb={3}>
-// 				<Grid container spacing={6}>
-// 					<Grid item xs={12}>
-// 						<Card>
-// 							<MDBox
-// 								mx={2}
-// 								mt={-3}
-// 								py={3}
-// 								px={2}
-// 								variant="gradient"
-// 								bgColor="info"
-// 								borderRadius="lg"
-// 								coloredShadow="info"
-// 							>
-// 								<Grid
-//                                     container
-//                                     direction="row"
-//                                     justifyContent="space-between"
-//                                     alignItems="center"
-//                                 >
-//                                     <MDTypography variant="h6" color="white">
-// 									Users Table
-//                                     </MDTypography>
-//                                     <Link to='/Users/add'>
-//                                         <MDButton variant="text">
-//                                             <Icon>add_circle</Icon>&nbsp;Add
-//                                         </MDButton>
-//                                     </Link>
-//                                 </Grid>
-// 							</MDBox>
-// 							<MDBox pt={3}>
-// 								<DataTable
-// 									table={{ columns, rows }}
-// 									isSorted={false}
-// 									entriesPerPage={false}
-// 									showTotalEntries={false}
-// 									noEndBorder
-// 								/>
-// 							</MDBox>
-// 						</Card>
-// 					</Grid>
-// 				</Grid>
-// 			</MDBox>
-// 			<Footer />
-// 		</DashboardLayout>
-// 	);
-// }
-
-// export default User;

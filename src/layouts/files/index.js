@@ -11,6 +11,7 @@ import DataTable from "examples/Tables/DataTable";
 import { useEffect, useState, useContext } from "react";
 import Icon from "@mui/material/Icon";
 import MDButton from "components/MDButton";
+import MDSnackbar from "components/MDSnackbar";
 
 import { AuthContext } from "context/AuthContext";
 import { Link } from "react-router-dom";
@@ -28,6 +29,13 @@ function Files() {
     const [rows, setRows] = useState([])
     const ctx = useContext(AuthContext)
 
+    const [openSnackBar, setOpenSnackBar] = useState(false)
+    const [serverResponse, setServerResponse] = useState('')
+    const [snackBarType, setSnackBarType] = useState('success')
+
+    const closeSnackBar = () => setOpenSnackBar(false);
+
+
     const deleteCategory = (file_id) => {
         if (window.confirm('Are you sure')) {
             fetch(`http://localhost:5000/files/${file_id}`, {
@@ -35,13 +43,21 @@ function Files() {
                 headers: {
                     'Authorization': 'Bearer ' + ctx.token
                 }
-            }).then(response => {
-                response.json()
-                    .then(deleted => {
-                        console.log(deleted)
-                    })
             })
-                .catch(e => e)
+            .then((response) => response.json())
+            .then((result) => {
+                console.log(result);
+                setServerResponse(result.messages.join(" "));
+                if (result.success) {
+                setSnackBarType("success");
+                } else {
+                setSnackBarType("error");
+                }
+                setOpenSnackBar(true);
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
         }
     }
 
@@ -118,6 +134,17 @@ function Files() {
                     </Grid>
                 </Grid>
             </MDBox>
+            <MDSnackbar
+                color={snackBarType}
+                icon={snackBarType == 'success' ? 'check' : 'warning'}
+                title="Recipe App"
+                content={serverResponse}
+                open={openSnackBar}
+                // onClose={closeSnackBar}
+                close={closeSnackBar}
+                dateTime=""
+                bgWhite
+            />
             <Footer />
         </DashboardLayout>
     );

@@ -27,11 +27,6 @@ function AddCategory() {
 
     const closeSnackBar = () => setOpenSnackBar(false);
 
-const [categories, setCategories] = useState(0);
-  const [categoriesData, setCategoriesData] = useState([]);
-
-  
-
     const addCategory = () => {
         const categoryName = nameRef.current.querySelector('input[type=text]').value
         const picFile = pRef.current.querySelector('input[type=file]').files
@@ -47,12 +42,20 @@ const [categories, setCategories] = useState(0);
             },
             body: formdata,
         })
-        .then((response) => {
-            window.alert(response?.messages?.join(' '))
-            if (response?.success) {
-                navigate('/categories')
+        .then((response) => response.json())
+        .then((result) => {
+            console.log(result);
+            setServerResponse(result.messages.join(" "));
+            if (result.success) {
+            setSnackBarType("success");
+            } else {
+            setSnackBarType("error");
             }
+            setOpenSnackBar(true);
         })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
         // }).catch(e => e) 
         
     }

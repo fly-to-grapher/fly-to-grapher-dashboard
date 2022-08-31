@@ -52,14 +52,14 @@ function SignUp() {
         fetch(`http://localhost:5000/users/signup`, {
             method: 'POST',
             body: JSON.stringify({
-              name,
-              username,
-              email,
-              password,
-              isAdmin
+                name,
+                username,
+                email,
+                password,
+                isAdmin
             }),
             headers:{
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             }
         }).then(response => response.json())
             .then(result => {
