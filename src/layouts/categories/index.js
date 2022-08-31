@@ -52,6 +52,7 @@ function Categories() {
                 setSnackBarType("error");
                 }
                 setOpenSnackBar(true);
+                window.location.reload();
             })
             .catch((error) => {
                 console.error("Error:", error);

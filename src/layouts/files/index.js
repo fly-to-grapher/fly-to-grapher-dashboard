@@ -36,7 +36,7 @@ function Files() {
     const closeSnackBar = () => setOpenSnackBar(false);
 
 
-    const deleteCategory = (file_id) => {
+    const deleteFile = (file_id) => {
         if (window.confirm('Are you sure')) {
             fetch(`http://localhost:5000/files/${file_id}`, {
                 method: "DELETE",
@@ -54,6 +54,7 @@ function Files() {
                 setSnackBarType("error");
                 }
                 setOpenSnackBar(true);
+                window.location.reload();
             })
             .catch((error) => {
                 console.error("Error:", error);
@@ -72,7 +73,7 @@ function Files() {
                             location: <>{file.location}</>,
                             file: <><img src={file.file_name} width="80" /></>,
                             actions: <>
-                                <MDButton variant="text" color="error" onClick={() => { deleteCategory(file.id) }}>
+                                <MDButton variant="text" color="error" onClick={() => { deleteFile(file.id) }}>
                                     <Icon>delete</Icon>&nbsp;delete
                                 </MDButton>
                                 {/* <Link to={`/files/edit/${file.id}`}>
