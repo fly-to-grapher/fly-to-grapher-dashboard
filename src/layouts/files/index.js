@@ -69,7 +69,7 @@ function Files() {
                     const allCategories = files.data.map((file) => {
                         return {
                             id: <>{file.id}</>,
-                            file_tyep: <>{file.file_type}</>,
+                            file_type: <>{file.file_type}</>,
                             location: <>{file.location}</>,
                             file: <><img src={file.file_name} width="80" /></>,
                             actions: <>
